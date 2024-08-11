@@ -1,3 +1,4 @@
+#define GLEW_STATIC
 #include<GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -25,6 +26,22 @@ std::vector<VertexBuffer> vb;
 std::vector<VertexArray> va;
 std::vector<IndexBuffer> ib;
  
+
+void GLAPIENTRY
+MessageCallback( GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar* message,
+                 const void* userParam )
+{
+  fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message );
+}
+
+
 int main(void)
 {
     GLFWwindow* window;
@@ -52,17 +69,22 @@ int main(void)
 
     std::cout << "[Debug] OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
     
+    glDebugMessageCallback(MessageCallback, 0);
+
+
     {
         Circle circle = Circle(0, 0, 0.2);
-        
-        vb.push_back(VertexBuffer(&circle.m_vertexPosition[0], circle.m_vertexPosition.size() * sizeof(float)));
+        //Gelis: Changed it so you're not making new vaos, vbos and ibos because you're already making them in the circle struct.
+        //Gelis: If you want to have a vector of "objects" make a vector of circles and bind the vaos and ibos like im doing for the single circle.
 
-        ib.push_back(IndexBuffer(&circle.m_vertexIndices[0], circle.m_vertexIndices.size()));
+        // vb.push_back(VertexBuffer(&circle.m_vertexPosition[0], circle.m_vertexPosition.size() * sizeof(float)));
 
-        va.push_back(VertexArray());
-        va[0].AddBuffer(vb[0], circle.m_layout);
+        // ib.push_back(IndexBuffer(&circle.m_vertexIndices[0], circle.m_vertexIndices.size()));
 
-        Shader shader = Shader("res/Shaders/Basic.shader");
+        // va.push_back(VertexArray());
+        // va[0].AddBuffer(vb[0], circle.m_layout);
+
+        Shader shader = Shader("OpenGL/res/Shaders/Basic.shader");
 
         Renderer renderer;
 
@@ -72,8 +94,8 @@ int main(void)
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
             
-            for (int i = 0; i < va.size(); i++)
-                renderer.Draw(va[i], ib[i], shader);
+            // for (int i = 0; i < va.size(); i++)
+            renderer.Draw(circle.m_vertexArray, circle.m_indexBuffer, shader);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

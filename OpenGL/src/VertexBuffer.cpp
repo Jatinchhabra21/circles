@@ -3,9 +3,10 @@
 
 VertexBuffer::VertexBuffer()
 {
+
 }
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size)
+void VertexBuffer::Init(const void* data, unsigned int size)
 {
     glGenBuffers(1, &m_RendererID);
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -14,7 +15,6 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size)
 
 VertexBuffer::~VertexBuffer()
 {
-
     glDeleteBuffers(1, &m_RendererID);
 }
 
