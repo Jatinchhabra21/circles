@@ -19,7 +19,7 @@ Shader::Shader(const std::string& filepath)
 
 Shader::~Shader()
 {
-    // glDeleteProgram(m_RenderedId);
+    glDeleteProgram(m_RenderedId);
 }
 
 void Shader::Bind() const
