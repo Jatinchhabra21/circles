@@ -5,9 +5,9 @@ IndexBuffer::IndexBuffer()
 {
 }
 
-IndexBuffer::IndexBuffer(const void* data, unsigned int count)
-    : m_Count(count)
+void IndexBuffer::Init(const void* data, unsigned int count)
 {
+    m_Count = count;
     ASSERT(sizeof(unsigned int) == sizeof(GLuint));
 
     glGenBuffers(1, &m_RendererID);
@@ -17,7 +17,6 @@ IndexBuffer::IndexBuffer(const void* data, unsigned int count)
 
 IndexBuffer::~IndexBuffer()
 {
-
     glDeleteBuffers(1, &m_RendererID);
 }
 
