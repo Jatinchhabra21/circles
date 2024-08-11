@@ -19,6 +19,11 @@
 #include "VertexBufferLayout.h"
 #include "Shader.h"
 #include "Renderer.h"
+#include "Circle.h"
+
+std::vector<VertexBuffer> vb;
+std::vector<VertexArray> va;
+std::vector<IndexBuffer> ib;
  
 int main(void)
 {
@@ -48,27 +53,14 @@ int main(void)
     std::cout << "[Debug] OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
     
     {
-        std::vector<float> positions = { 
-            0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-            0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-        };
+        Circle circle = Circle(0, 0, 0.2);
+        
+        vb.push_back(VertexBuffer(&circle.m_vertexPosition[0], circle.m_vertexPosition.size() * sizeof(float)));
 
-        std::vector<unsigned int> indices = { 
-            0, 1, 0,
-            2, 2, 0,
-            1, 2, 0
-        };
+        ib.push_back(IndexBuffer(&circle.m_vertexIndices[0], circle.m_vertexIndices.size()));
 
-        VertexArray va;
-        VertexBuffer vb(&positions[0], positions.size() * sizeof(float));
-
-        VertexBufferLayout layout;
-        layout.Push<float>(3);
-        layout.Push<float>(3);
-        va.AddBuffer(vb, layout);
-
-        IndexBuffer ib(&indices[0], indices.size());
+        va.push_back(VertexArray());
+        va[0].AddBuffer(vb[0], circle.m_layout);
 
         Shader shader = Shader("res/Shaders/Basic.shader");
 
@@ -80,7 +72,8 @@ int main(void)
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
             
-            renderer.Draw(va, ib, shader);
+            for (int i = 0; i < va.size(); i++)
+                renderer.Draw(va[i], ib[i], shader);
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

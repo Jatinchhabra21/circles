@@ -1,4 +1,8 @@
 #include "Renderer.h"
+#include "Circle.h"
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+
 #include<iostream>
 
 void GLClearError()
@@ -22,5 +26,5 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     ib.Bind();
     shader.Bind();
 
-    glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLE_FAN, ib.GetCount(), GL_UNSIGNED_INT, 0);
 }
